@@ -11,15 +11,11 @@ namespace SurveyManagerApi.Data
 
         public DbSet<Survey> Surveys { get; set; }
         public DbSet<Question> Questions { get; set; }
-
         public DbSet<Option> Options { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Survey>().ToTable("Survey");
-            modelBuilder.Entity<Question>().ToTable("Question");
-            modelBuilder.Entity<Option>().ToTable("Option");
-
+           
         }
     }
 }

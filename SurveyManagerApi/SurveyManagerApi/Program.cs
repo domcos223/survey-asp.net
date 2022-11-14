@@ -22,6 +22,8 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<SurveyManagerContext>(options =>
   options.UseSqlServer(builder.Configuration.GetConnectionString("SurveyManagerContext")));
 
+builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -33,6 +35,11 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+}
+else
+{
+    app.UseDeveloperExceptionPage();
+    app.UseMigrationsEndPoint();
 }
 
 using (var scope = app.Services.CreateScope())
@@ -46,8 +53,15 @@ using (var scope = app.Services.CreateScope())
 
 app.UseHttpsRedirection();
 
+app.UseCors(MyAllowSpecificOrigins);
+
 app.UseAuthorization();
 
 app.MapControllers();
 
 app.Run();
+
+public partial class Program
+{
+
+}

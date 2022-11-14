@@ -9,7 +9,5 @@ namespace SurveyManagerApi.Data
         public abstract DbSet<Question> Questions { get; set; }
         public abstract DbSet<Option> Options { get; set; }
 
-
-
     }
 }
