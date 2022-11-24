@@ -1,11 +1,17 @@
-﻿namespace SurveyManagerApi.Models
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
+
+namespace SurveyManagerApi.Models
 {
     public class Option
-    {   
-        public int Id { get; set; }
-        public int QuestionId { get; set; }
+    {
+        [Key]
+        public string Id { get; set; }
+        public string QuestionId { get; set; }
         public string Text { get; set; }
-        public Question Question { get; set; }
 
+        [JsonIgnore]
+        public Question? Question { get; set; }
     }
 }

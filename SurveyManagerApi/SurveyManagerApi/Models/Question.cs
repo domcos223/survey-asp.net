@@ -1,11 +1,19 @@
-﻿namespace SurveyManagerApi.Models
+﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
+
+namespace SurveyManagerApi.Models
 {
     public class Question
-    {
-        public int Id { get; set; }
-        public int SurveyId { get; set; }
+    {   
+        [Key]
+        public string Id { get; set; }
+        public string SurveyId { get; set; }
         public string Text { get; set; }
         public ICollection<Option> Options { get; set; }
-        public Survey Survey { get; set; }
+
+        [JsonIgnore]
+        public virtual Survey? Survey { get; set;}
+
+
     }
 }

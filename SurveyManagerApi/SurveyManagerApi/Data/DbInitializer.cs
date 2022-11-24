@@ -12,8 +12,8 @@ namespace SurveyManagerApi.Data
             }
 
             var surveys = new List<Survey>();
-            var survey_dogs = new Survey { Name = "Dogs Survey", Details = "Survey about your favorite dog breeds!" };
-            var survey_cats = new Survey { Name = "Cats Survey", Details = "Survey about your favorite cat breeds!" };
+            var survey_dogs = new Survey { Id = "Survey1", Name = "Dogs Survey", Details = "Survey about your favorite dog breeds!" };
+            var survey_cats = new Survey { Id = "Survey2", Name = "Cats Survey", Details = "Survey about your favorite cat breeds!" };
 
             surveys.Add(survey_dogs);
             surveys.Add(survey_cats);
@@ -29,8 +29,8 @@ namespace SurveyManagerApi.Data
             }
             var questions = new List<Question>();
 
-            questions.Add(new Question { SurveyId = 1, Text = "What is your favorite dog breed?" });
-            questions.Add(new Question { SurveyId = 1, Text = "Do you have a dog?" });
+            questions.Add(new Question { Id="Question1", SurveyId = "Survey1", Text = "What is your favorite dog breed?" });
+            questions.Add(new Question { Id = "Question2", SurveyId = "Survey1", Text = "Do you have a dog?" });
 
             context.Questions.AddRange(questions);
             context.SaveChanges();
@@ -44,12 +44,12 @@ namespace SurveyManagerApi.Data
             var options = new List<Option>();
 
 
-            options.Add(new Option { QuestionId = 1, Text = "Husky"});
-            options.Add(new Option { QuestionId = 1, Text = "Golden Retriever" });
-            options.Add( new Option { QuestionId = 1, Text = "Airdale Terrier" });
+            options.Add(new Option { Id="Question1_1", QuestionId = "Question1", Text = "Husky"});
+            options.Add(new Option { Id = "Question1_2", QuestionId = "Question1", Text = "Golden Retriever" });
+            options.Add( new Option { Id = "Question1_3", QuestionId = "Question1", Text = "Airdale Terrier" });
 
-            options.Add(new Option { QuestionId = 2, Text = "Yes" });
-            options.Add(new Option { QuestionId = 2, Text = "No" });
+            options.Add(new Option { Id = "Question2_1", QuestionId = "Question2", Text = "Yes" });
+            options.Add(new Option { Id = "Question2_2", QuestionId = "Question2", Text = "No" });
 
            
             context.Options.AddRange(options);
