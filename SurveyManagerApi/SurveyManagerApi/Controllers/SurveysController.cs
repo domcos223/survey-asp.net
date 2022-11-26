@@ -31,9 +31,9 @@ namespace SurveyManagerApi.Controllers
 
         // GET: api/Surveys/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Survey>> GetSurvey(int id)
+        public async Task<ActionResult<Survey>> GetSurvey(string id)
         {
-            var survey = await _context.Surveys.FindAsync(id);
+            var survey = await _context.Surveys.Include(i => i.Questions).ThenInclude(t => t.Options).Where(s => s.Id == id).SingleOrDefaultAsync();
 
             if (survey == null)
             {
