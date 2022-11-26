@@ -12,8 +12,8 @@ namespace SurveyManagerApi.Data
             }
 
             var surveys = new List<Survey>();
-            var survey_dogs = new Survey { Id = "Survey1", Name = "Dogs Survey", Details = "Survey about your favorite dog breeds!" };
-            var survey_cats = new Survey { Id = "Survey2", Name = "Cats Survey", Details = "Survey about your favorite cat breeds!" };
+            var survey_dogs = new Survey { Id = "Survey1", Name = "Dogs Survey", Details = "Survey about your favorite dog breeds!", OptionType="1" };
+            var survey_cats = new Survey { Id = "Survey2", Name = "Cats Survey", Details = "Survey about your favorite cat breeds!", OptionType= "2"};
 
             surveys.Add(survey_dogs);
             surveys.Add(survey_cats);
