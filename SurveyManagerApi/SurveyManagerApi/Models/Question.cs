@@ -11,6 +11,8 @@ namespace SurveyManagerApi.Models
         public string Text { get; set; }
         public ICollection<Option> Options { get; set; }
 
+        public string MostAnsweredOp { get; set; }
+
         [JsonIgnore]
         public virtual Survey? Survey { get; set;}
 
