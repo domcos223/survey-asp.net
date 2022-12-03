@@ -29,8 +29,8 @@ namespace SurveyManagerApi.Data
             }
             var questions = new List<Question>();
 
-            questions.Add(new Question { Id="Question1", SurveyId = "Survey1", Text = "What is your favorite dog breed?" });
-            questions.Add(new Question { Id = "Question2", SurveyId = "Survey1", Text = "Do you have a dog?" });
+            questions.Add(new Question { Id="Question1", SurveyId = "Survey1", Text = "What is your favorite dog breed?", MostAnsweredOp = "" });
+            questions.Add(new Question { Id = "Question2", SurveyId = "Survey1", Text = "Do you have a dog?", MostAnsweredOp = "" });
 
             context.Questions.AddRange(questions);
             context.SaveChanges();

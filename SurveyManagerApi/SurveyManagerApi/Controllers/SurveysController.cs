@@ -42,6 +42,7 @@ namespace SurveyManagerApi.Controllers
 
             return survey;
         }
+ 
 
         // PUT: api/Surveys/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -65,6 +66,7 @@ namespace SurveyManagerApi.Controllers
             {
                 foreach (var o in q.Options)
                 {
+
                     _context.Update(o);
                 }
                 await _context.SaveChangesAsync();
@@ -77,6 +79,14 @@ namespace SurveyManagerApi.Controllers
             {
                 option.Answered++;
                 option.IsPicked = false; //reset pick
+            }
+
+            var questions = _context.Questions.Where(q => q.SurveyId == id).ToList();
+            foreach (var q in questions)
+            {
+                var previous = q.MostAnsweredOp;
+                var mostAnsweredOp = q.Options.MaxBy(o => o.Answered).Text;
+                q.MostAnsweredOp = mostAnsweredOp;
             }
 
             _context.SaveChanges();
