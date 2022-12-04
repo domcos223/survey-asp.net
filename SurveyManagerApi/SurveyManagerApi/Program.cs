@@ -1,6 +1,7 @@
 using SurveyManagerApi.Data;
 using Microsoft.EntityFrameworkCore;
-
+using EmailService;
+using System.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
@@ -16,6 +17,10 @@ builder.Services.AddCors(options =>
 
 });
 // Add services to the container.
+var emailConfig = builder.Configuration
+        .GetSection("EmailConfiguration")
+        .Get<EmailConfiguration>();
+builder.Services.AddSingleton(emailConfig);
 
 builder.Services.AddControllers();
 
@@ -27,6 +32,7 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<IEmailSender, EmailSender>();
 
 var app = builder.Build();
 
