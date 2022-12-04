@@ -1,6 +1,7 @@
 ﻿using EmailService;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SurveyManagerApi.Models;
 
 namespace SurveyManagerApi.Controllers
 {
@@ -16,10 +17,18 @@ namespace SurveyManagerApi.Controllers
             _emailSender = emailSender;
         }
 
-        [HttpGet]
-        public IActionResult Get()
+        [HttpPost]
+        public IActionResult SendEmailFromForm([FromBody] EmailTemplate emailData)
         {
-            var message = new Message(new string[] { "surveymanagerservice@gmail.com" }, "Test email", "This is the content from our email.");
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            var toEmail = emailData.Emails;
+            var sub = emailData.Subject;
+            var content = emailData.Content;
+
+            var message = new Message(toEmail,sub, content);
             _emailSender.SendEmail(message);
             return Ok() ;
         }
