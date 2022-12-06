@@ -133,10 +133,5 @@ namespace SurveyManagerApi.Controllers
 
             return NoContent();
         }
-
-        private bool SurveyExists(string id)
-        {
-            return _context.Surveys.Any(e => e.Id == id);
-        }
     }
 }
