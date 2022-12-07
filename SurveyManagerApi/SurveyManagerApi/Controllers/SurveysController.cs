@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using NuGet.Protocol.Core.Types;
 using SurveyManagerApi.Data;
 using SurveyManagerApi.Models;
+using SurveyManagerApi.Services;
 
 namespace SurveyManagerApi.Controllers
 {
@@ -15,35 +16,32 @@ namespace SurveyManagerApi.Controllers
     [ApiController]
     public class SurveysController : ControllerBase
     {
-        private readonly SurveyManagerContext _context;
+        private readonly ISurveyService _service;
 
-        public SurveysController(SurveyManagerContext context)
+        public SurveysController(ISurveyService service)
         {
-            _context = context;
+            _service = service;
         }
 
         // GET: api/Surveys
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Survey>>> GetSurveys()
         {
-            return await _context.Surveys.Include(i => i.Questions).ThenInclude(t => t.Options).ToListAsync();
+            return await _service.GetAll();
         }
 
         // GET: api/Surveys/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Survey>> GetSurvey(string id)
         {
-            var survey = await _context.Surveys.Include(i => i.Questions).ThenInclude(t => t.Options).Where(s => s.Id == id).SingleOrDefaultAsync();
-
+            var survey =  await _service.GetById(id);
             if (survey == null)
             {
                 return NotFound();
             }
-
             return survey;
         }
  
-
         // PUT: api/Surveys/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -57,39 +55,11 @@ namespace SurveyManagerApi.Controllers
             {
                 return BadRequest();
             }
-            var survey = await _context.Surveys.AsNoTracking().Include(i => i.Questions).ThenInclude(t => t.Options).Where(s => s.Id == id).SingleOrDefaultAsync();
-
-            if (survey == null) { 
+            var surveyFromDb = _service.Submit(id, filledSurvey);
+            if (surveyFromDb == null)
+            {
                 return NotFound();
             }
-            foreach (var q in filledSurvey.Questions)
-            {
-                foreach (var o in q.Options)
-                {
-
-                    _context.Update(o);
-                }
-                await _context.SaveChangesAsync();
-            }
-            _context.Entry(filledSurvey).State = EntityState.Modified;
-            _context.SaveChanges();
-            _context.ChangeTracker.Clear();
-           var pickedOptions = _context.Options.Where(o => o.IsPicked == true);
-            foreach (var option in pickedOptions)
-            {
-                option.Answered++;
-                option.IsPicked = false; //reset pick
-            }
-
-            var questions = _context.Questions.Where(q => q.SurveyId == id).ToList();
-            foreach (var q in questions)
-            {
-                var previous = q.MostAnsweredOp;
-                var mostAnsweredOp = q.Options.MaxBy(o => o.Answered).Text;
-                q.MostAnsweredOp = mostAnsweredOp;
-            }
-
-            _context.SaveChanges();
             return NoContent();
         }
 
@@ -103,33 +73,21 @@ namespace SurveyManagerApi.Controllers
             {
                 return BadRequest();
             }
-      
-            foreach (var q in survey.Questions)
-            {
-                q.Survey = survey;
-                foreach (var o in q.Options)
-                {
-                    o.Question = q;
-                }
-            }
-            _context.Surveys.Add(survey);
-            await _context.SaveChangesAsync();
-
+             _service.Add(survey);
+            
             return CreatedAtAction("GetSurvey", new { id = survey.Id }, survey);
         }
 
         // DELETE: api/Surveys/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSurvey(string id)
-        {
-            var survey = await _context.Surveys.FindAsync(id);
+        {   
+            var survey = await _service.GetById(id);
             if (survey == null)
             {
                 return NotFound();
             }
-
-            _context.Surveys.Remove(survey);
-            await _context.SaveChangesAsync();
+            _service.Delete(id);
 
             return NoContent();
         }
