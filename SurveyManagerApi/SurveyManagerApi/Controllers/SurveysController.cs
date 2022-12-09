@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 using NuGet.Protocol.Core.Types;
 using SurveyManagerApi.Data;
 using SurveyManagerApi.Models;
-
 namespace SurveyManagerApi.Controllers
 {
     [Route("api/[controller]")]
@@ -16,38 +15,32 @@ namespace SurveyManagerApi.Controllers
     public class SurveysController : ControllerBase
     {
         private readonly SurveyManagerContext _context;
-
         public SurveysController(SurveyManagerContext context)
         {
             _context = context;
         }
-
         // GET: api/Surveys
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Survey>>> GetSurveys()
         {
             return await _context.Surveys.Include(i => i.Questions.OrderBy(o => o.OrderId)).ThenInclude(t => t.Options.OrderBy(o => o.OrderId)).ToListAsync();
         }
-
         // GET: api/Surveys/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Survey>> GetSurvey(string id)
         {
             var survey = await _context.Surveys.Include(i => i.Questions.OrderBy(o => o.OrderId)).ThenInclude(t => t.Options.OrderBy(o=>o.OrderId)).Where(s => s.Id == id).SingleOrDefaultAsync();
-
             if (survey == null)
             {
                 return NotFound();
             }
-
             return survey;
         }
- 
 
         // PUT: api/Surveys/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> SaveAnswerSurvey( [FromRoute] string id, [FromBody] Survey filledSurvey)
+        public async Task<IActionResult> SaveAnswerSurvey([FromRoute] string id, [FromBody] Survey filledSurvey)
         {
             if (id != filledSurvey.Id)
             {
@@ -57,6 +50,7 @@ namespace SurveyManagerApi.Controllers
             {
                 return BadRequest();
             }
+            
             var isFound = await _context.Surveys.AnyAsync(s =>s.Id == id);
 
             if (isFound == false) { 
@@ -66,20 +60,18 @@ namespace SurveyManagerApi.Controllers
             {
                 foreach (var o in q.Options)
                 {
-
                     _context.Update(o);
                 }
                 await _context.SaveChangesAsync();
             }
             _context.Entry(filledSurvey).State = EntityState.Modified;
             _context.SaveChanges();
-           var pickedOptions = _context.Options.Where(o => o.IsPicked == true);
+            var pickedOptions = _context.Options.Where(o => o.IsPicked == true);
             foreach (var option in pickedOptions)
             {
                 option.Answered++;
                 option.IsPicked = false; //reset pick
             }
-
             var questions = _context.Questions.Where(q => q.SurveyId == id).ToList();
             foreach (var q in questions)
             {
@@ -87,22 +79,19 @@ namespace SurveyManagerApi.Controllers
                 var mostAnsweredOp = q.Options.MaxBy(o => o.Answered).Text;
                 q.MostAnsweredOp = mostAnsweredOp;
             }
-
             _context.SaveChanges();
             return NoContent();
         }
-
         // POST: api/Surveys
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Survey>> PostSurvey([FromBody] Survey survey)
         {
-
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
-      
+
             foreach (var q in survey.Questions)
             {
                 q.Survey = survey;
@@ -113,10 +102,8 @@ namespace SurveyManagerApi.Controllers
             }
             _context.Surveys.Add(survey);
             await _context.SaveChangesAsync();
-
             return CreatedAtAction("GetSurvey", new { id = survey.Id }, survey);
         }
-
         // DELETE: api/Surveys/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSurvey(string id)
@@ -126,7 +113,6 @@ namespace SurveyManagerApi.Controllers
             {
                 return NotFound();
             }
-
             _context.Surveys.Remove(survey);
             await _context.SaveChangesAsync();
 
