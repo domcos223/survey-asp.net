@@ -57,9 +57,9 @@ namespace SurveyManagerApi.Controllers
             {
                 return BadRequest();
             }
-            var survey = await _context.Surveys.AsNoTracking().Include(i => i.Questions).ThenInclude(t => t.Options).Where(s => s.Id == id).SingleOrDefaultAsync();
+            var isFound = await _context.Surveys.AnyAsync(s =>s.Id == id);
 
-            if (survey == null) { 
+            if (isFound == false) { 
                 return NotFound();
             }
             foreach (var q in filledSurvey.Questions)
@@ -73,7 +73,6 @@ namespace SurveyManagerApi.Controllers
             }
             _context.Entry(filledSurvey).State = EntityState.Modified;
             _context.SaveChanges();
-            _context.ChangeTracker.Clear();
            var pickedOptions = _context.Options.Where(o => o.IsPicked == true);
             foreach (var option in pickedOptions)
             {
