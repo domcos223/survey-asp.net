@@ -2,7 +2,6 @@ using SurveyManagerApi.Data;
 using Microsoft.EntityFrameworkCore;
 using EmailService;
 using System.Configuration;
-using SurveyManagerApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
@@ -34,7 +33,6 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IEmailSender, EmailSender>();
-builder.Services.AddScoped<ISurveyService, SurveyService>();
 
 var app = builder.Build();
 
