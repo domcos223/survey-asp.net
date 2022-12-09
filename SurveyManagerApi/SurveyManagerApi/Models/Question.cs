@@ -7,6 +7,8 @@ namespace SurveyManagerApi.Models
     {   
         [Key]
         public string Id { get; set; }
+
+        public int OrderId { get; set; }
         public string SurveyId { get; set; }
         public string Text { get; set; }
         public ICollection<Option> Options { get; set; }

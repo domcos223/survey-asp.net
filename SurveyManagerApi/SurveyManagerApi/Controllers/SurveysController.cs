@@ -23,13 +23,13 @@ namespace SurveyManagerApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Survey>>> GetSurveys()
         {
-            return await _context.Surveys.Include(i => i.Questions).ThenInclude(t => t.Options).ToListAsync();
+            return await _context.Surveys.Include(i => i.Questions.OrderBy(o => o.OrderId)).ThenInclude(t => t.Options.OrderBy(o => o.OrderId)).ToListAsync();
         }
         // GET: api/Surveys/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Survey>> GetSurvey(string id)
         {
-            var survey = await _context.Surveys.Include(i => i.Questions).ThenInclude(t => t.Options).Where(s => s.Id == id).SingleOrDefaultAsync();
+            var survey = await _context.Surveys.Include(i => i.Questions.OrderBy(o => o.OrderId)).ThenInclude(t => t.Options.OrderBy(o=>o.OrderId)).Where(s => s.Id == id).SingleOrDefaultAsync();
             if (survey == null)
             {
                 return NotFound();
@@ -50,9 +50,10 @@ namespace SurveyManagerApi.Controllers
             {
                 return BadRequest();
             }
-            var survey = await _context.Surveys.AsNoTracking().Include(i => i.Questions).ThenInclude(t => t.Options).Where(s => s.Id == id).SingleOrDefaultAsync();
-            if (survey == null)
-            {
+            
+            var isFound = await _context.Surveys.AnyAsync(s =>s.Id == id);
+
+            if (isFound == false) { 
                 return NotFound();
             }
             foreach (var q in filledSurvey.Questions)
@@ -65,7 +66,6 @@ namespace SurveyManagerApi.Controllers
             }
             _context.Entry(filledSurvey).State = EntityState.Modified;
             _context.SaveChanges();
-            _context.ChangeTracker.Clear();
             var pickedOptions = _context.Options.Where(o => o.IsPicked == true);
             foreach (var option in pickedOptions)
             {

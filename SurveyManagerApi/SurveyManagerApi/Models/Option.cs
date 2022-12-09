@@ -8,6 +8,7 @@ namespace SurveyManagerApi.Models
     {
         [Key]
         public string Id { get; set; }
+        public int OrderId { get; set; }
         public string QuestionId { get; set; }
         public string Text { get; set; }
         public bool IsPicked { get; set; } = false;
